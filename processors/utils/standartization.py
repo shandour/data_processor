@@ -8,21 +8,13 @@ def z_feature_scaling(data, preprocessing_result, **kwargs):
     return values
 
 
-def _get_max_value_helper(result_dict, config):
-    standardized_results = result_dict[config['standartization_column']]
-    return max(standardized_results)
+def get_max_feature_idx_val(standardized_results):
+    max_val = max(standardized_results)
+    idx = standardized_results.index(max_val)
+
+    return idx, max_val
 
 
-def get_max_feature_idx(data, preprocessing_result, *,
-                        result_dict, config=None):
-    return standardized_results.index(_get_max_value_helper(result_dict, config))
-
-
-def max_feature_abs_mean_diff(data, preprocessing_result, *,
-                              result_dict, config=None):
-    max_val = _get_max_value_helper(result_dict, config)
-    max_val_idx = result_dict[config['standartization_column']].index(max_val)
-    idx_mean_val = preprocessing_result['mean'][max_val_idx]
-
-    return abs(idx_mean_val - max_val)
+def max_feature_abs_mean_diff(max_val, max_val_idx, mean_for_idx):
+    return abs(mean_for_idx - max_val)
 
