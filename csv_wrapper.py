@@ -32,7 +32,7 @@ class CsvWrapper(Wrapper):
         features = config['features']
         input_fpath = config['input_fpath']
         output_fpath = config['output_fpath']
-        skip_first = config['skip_first']
+        skip_header = config['skip_header']
         data_row_delimiter = config['data_row_delimiter']
 
         with open(input_fpath) as input_file:
@@ -49,16 +49,16 @@ class CsvWrapper(Wrapper):
                         delimiter=delimiter,
                         fieldnames=fieldnames)
                     writer.writeheader()
-                    if skip_first:
+                    if skip_header:
                         input_file.readline()
                     for line in input_file:
                         identifier, data = line.split(delimiter)
                         line_dict = {label_col: identifier}
                         for processor in self.processors:
-                            line_dict.update(
-                                processor.compute(
-                                    data[1:].split(data_row_delimiter),
-                                    feature))
+                            processor_dict = processor.compute(
+                                    data.split(data_row_delimiter)[1:],
+                                    feature)
+                            line_dict.update(processor_dict)
                         writer.writerow(line_dict)
 
     @staticmethod

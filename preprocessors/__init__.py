@@ -1,1 +1,1 @@
-from .csv_preprocessor import CSVPrepocessor
+from .csv_preprocessor import CsvPrepocessor

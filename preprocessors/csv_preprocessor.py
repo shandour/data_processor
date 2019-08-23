@@ -5,11 +5,11 @@ import tempfile
 from math import sqrt
 
 
-class CSVPrepocessor:
-    def __init__(self, training_data_fpath, features,
+class CsvPrepocessor:
+    def __init__(self, *, training_data_fpath, features,
                  delimiter, data_type, f_format='csv',
                  data_row_delimiter=',',
-                 skip_header=True, count_rows=False):
+                 skip_header=True, count_rows=False, **kwargs):
         self.training_data_fpath = training_data_fpath
         self.features = features
         self.delimiter = delimiter
@@ -19,7 +19,7 @@ class CSVPrepocessor:
         self.skip_header = skip_header
         self.count_rows = count_rows
 
-        self.result_dict = None
+        self.result_dict = {}
         self.tmp_dir = None
 
     def preprocess(self) -> dict:
@@ -62,12 +62,13 @@ class CSVPrepocessor:
             feature_file = feature_files_dict.get(data_row_feature)
             if feature_file:
                 feature_file.write(
-                    f'{data_row_delimiter}'.join(data_row_line_values[1:]))
+                    f'{data_row_delimiter}'.join(
+                        data_row_line_values[1:]) + '\n')
 
         with open(training_fpath) as f:
             try:
                 feature_files_dict = {
-                    feature: open(self._get_fpath(feature))
+                    feature: open(self._get_fpath(feature), 'w')
                     for feature in features
                 }
                 csv_reader = csv.reader(f, delimiter=delimiter)
@@ -87,7 +88,7 @@ class CSVPrepocessor:
             self.result_dict[feature][attribute][i][0] += value
             self.result_dict[feature][attribute][i][1] += 1
         except KeyError:
-            self.result_dict[feature][attribute][i] = (value, 1)
+            self.result_dict[feature][attribute][i] = [value, 1]
 
     def _increment_rows(self, feature):
         exists = self.result_dict[feature]['row_count'] is not None
@@ -105,12 +106,12 @@ class CSVPrepocessor:
                 self._increment_value_and_count(
                     feature, 'mean', i, self.data_type(val.strip()))
 
-            # calculate real value based on Tuple[sum, count]
-            for k in self.result_dict[feature]['mean'].keys():
-                self.result_dict[feature]['mean'][k] = (
-                    self.result_dict[feature]['mean'][k][0] /
-                    self.result_dict[feature]['mean'][k][1]
-                )
+        # calculate real value based on Tuple[sum, count]
+        for k in self.result_dict[feature]['mean'].keys():
+            self.result_dict[feature]['mean'][k] = (
+                self.result_dict[feature]['mean'][k][0] /
+                self.result_dict[feature]['mean'][k][1]
+            )
 
     def _get_stds(self, f, feature, count_rows=False):
         for line in f:
@@ -120,13 +121,11 @@ class CSVPrepocessor:
             for i, val in enumerate(values):
                 self._increment_value_and_count(
                     feature, 'std', i,
-                    (self.data_type(val.strip()) -
-                     self.result_dict[feature]['mean'][i]) ** 2)
+                    self.data_type((self.data_type(val.strip()) -
+                                   self.result_dict[feature]['mean'][i]) ** 2))
 
-            # calculate real value based on Tuple[sum, count]
-            for k in self.result_dict[feature]['std'].keys():
-                self.result_dict[feature]['std'][k] = sqrt(
-                    self.result_dict[feature]['std'][k][0] /
-                    self.result_dict[feature]['std'][k][1]
-                )
-
+        # calculate real value based on Tuple[sum, count]
+        for k in self.result_dict[feature]['std'].keys():
+            self.result_dict[feature]['std'][k] = self.data_type(
+                sqrt(self.result_dict[feature]['std'][k][0] /
+                     self.result_dict[feature]['std'][k][1]))

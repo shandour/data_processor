@@ -26,8 +26,7 @@ class CsvProcessor(Processor):
         data = [config['data_type'](el) for el in data]
 
         self.handler.set_data(data=data,
-                              preprocessing_result=self.preprocessing_result,
-                              feature=feature)
+                              preprocessing_result=self.preprocessing_result[
+                                  feature])
 
         return self.handler.handle()
-

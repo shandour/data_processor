@@ -8,10 +8,10 @@ class Processor(CheckConfigMixin):
     required_fields = {'col_dict', 'f_format'}
 
     def __init__(self, preprocessor_cls, handler=DefaultHandler,
-                 config={}, delayed=False):
+                 config={}, delayed=True):
         self.config = config
         self._initialized = not delayed
-        self.preprocessor = preprocessor_cls
+        self.preprocessor_cls = preprocessor_cls
         self.handler = handler(config)
         self.preprocessing_result = None
 
@@ -19,7 +19,7 @@ class Processor(CheckConfigMixin):
             self._init_preprocessor()
 
     def _init_preprocessor(self):
-        self.preprocessor = self.preprocessor(deepcopy(self.config))
+        self.preprocessor = self.preprocessor_cls(**deepcopy(self.config))
 
     @property
     def col_names(self):
@@ -30,7 +30,7 @@ class Processor(CheckConfigMixin):
         self._check_config(self.config)
         if not self._initialized:
             self._init_preprocessor()
-        self._compute(*args, **kwargs)
+        return self._compute(*args, **kwargs)
 
     def _compute(self, *args, **kwargs):
         raise NotImplemented
@@ -40,4 +40,3 @@ class Processor(CheckConfigMixin):
         if not self._initialized:
             self._init_preprocessor()
         self.preprocessing_result = self.preprocessor.preprocess()
-
