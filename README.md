@@ -1,5 +1,5 @@
 a working example how a resultant file for feature '2' can be generated:
-
+```
 from stat_analyzer.csv_wrapper import CsvWrapper
 from stat_analyzer.processors import CsvProcessor, ZScalingHandler
 from stat_analyzer.preprocessors import CsvPrepocessor
@@ -33,6 +33,6 @@ wrapper_config = {
 processors = [pr]
 w = CsvWrapper(processors, wrapper_config)
 w.compute()
-
+```
 
 Preprocessors prepare data for processors. Processors are called from within their respective wrapper. For each feature a file named {feature}_{your output_path_file_name}.{file_format} is generated.
