@@ -1,1 +1,1 @@
-from .standartization import *
+from .standardization import *

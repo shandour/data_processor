@@ -17,7 +17,7 @@ processor_config = {
             'feature_max_abs_diff': max_feature_abs_mean_diff,
         },
         'f_format': 'tsv',
-        'standartization_column': 'feature_stand',
+        'standardization_column': 'feature_stand',
 }
 
 pr = CsvProcessor(CsvPrepocessor, handler=ZScalingHandler, config=processor_config)

@@ -33,19 +33,19 @@ class ZScalingHandler(DefaultHandler):
         getattr(self, 'data')
         config = self.config
         col_dict = config['col_dict']
-        standartization_column = config['standartization_column']
+        standardization_column = config['standartization_column']
         feature_preprocessing_result = self.preprocessing_result
         data = self.data
         result_dict = {}
         data_conversion_func = lambda x: float(config['data_type'](x))
 
         max_feature_id_key, max_feature_abs_key, dict_remainder =\
-            self._get_additional_params(standartization_column, col_dict)
+            self._get_additional_params(standardization_column, col_dict)
 
-        result_dict[standartization_column] = col_dict[standartization_column](
+        result_dict[standardization_column] = col_dict[standardization_column](
             data, feature_preprocessing_result, data_conversion_func)
         result_dict[max_feature_id_key], _ =\
-            col_dict[max_feature_id_key](result_dict[standartization_column])
+            col_dict[max_feature_id_key](result_dict[standardization_column])
         result_dict[max_feature_abs_key] = col_dict[max_feature_abs_key](
             data[result_dict[max_feature_id_key]],
             feature_preprocessing_result['mean'][
@@ -60,7 +60,7 @@ class ZScalingHandler(DefaultHandler):
                                result_dict=result_dict, config=config)
         return result_dict
 
-    def _get_additional_params(self, standartization_column, col_dict):
+    def _get_additional_params(self, standardization_column, col_dict):
         max_feature_id_key = getattr(self, 'max_feature_id_key', None)
         max_feature_abs_key = getattr(self, 'max_feature_abs_key', None)
         dict_remainder = getattr(self, 'dict_remainder', None)
@@ -72,7 +72,7 @@ class ZScalingHandler(DefaultHandler):
                 list(col_dict.values()).index(max_feature_abs_mean_diff)]
         if not dict_remainder:
             dict_remainder = (set(col_dict.keys()) -
-                              set([standartization_column,
+                              set([standardization_column,
                                    max_feature_abs_key,
                                    max_feature_id_key]))
         return max_feature_id_key, max_feature_abs_key, dict_remainder

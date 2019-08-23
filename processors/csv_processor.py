@@ -9,15 +9,15 @@ class CsvProcessor(Processor):
         'col_dict',
         'f_format',
         # needed for computations; should also be included in col_dict
-        'standartization_column'
+        'standardization_column'
     }
 
     @classmethod
     def _check_config(cls, config):
         super()._check_config(config)
-        if config['standartization_column'] not in config['col_dict']:
+        if config['standardization_column'] not in config['col_dict']:
             raise ImproperlyConfigured(
-                'The value of the config standartization_column must '
+                'The value of the config standardization_column must '
                 'be used as a config col_dict key.'
             )
 
