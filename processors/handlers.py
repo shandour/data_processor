@@ -33,7 +33,7 @@ class ZScalingHandler(DefaultHandler):
         getattr(self, 'data')
         config = self.config
         col_dict = config['col_dict']
-        standardization_column = config['standartization_column']
+        standardization_column = config['standardization_column']
         feature_preprocessing_result = self.preprocessing_result
         data = self.data
         result_dict = {}
